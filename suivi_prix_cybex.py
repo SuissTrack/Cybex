@@ -46,22 +46,27 @@ def update_timestamp():
 
 urls = {
     "Cybex Priam": {
-        "France": "https://www.cybex-online.com/fr/fr/p/set-st-pl-priam-4.html",
-        "Suisse": "https://www.cybex-online.com/fr/ch/p/set-st-pl-priam-4.html",
-        "Allemagne": "https://www.cybex-online.com/de/de/p/set-st-pl-priam-4.html",
-        "Italie": "https://www.cybex-online.com/it/it/p/set-st-pl-priam-4.html"
+        "France": "https://www.amazon.fr/dp/B096VFCT8M",
+        "Suisse": "https://www.galaxus.ch/fr/s6/product/cybex-priam-seat-pack-we-the-baby-poussette-21401969",
+        "Allemagne": "https://www.amazon.de/dp/B096VFCT8M",
+        "Italie": "https://www.amazon.it/dp/B096VFCT8M",
+        "USA (official)": "https://www.cybex-online.com/en/us/strollers/full-size-strollers/?...Priam%203-in-1%20Travel%20System",
+        "USA (La Parisienne)": "https://www.cybex-online.com/en/us/p/ST_PL_Priam_La_Parisienne_US.html",
+        "USA (Seat Pack 2023)": "https://www.cybex-online.com/en/us/p/ST_PL_Priam_4_Seat_Pack_US.html"
     },
     "Cybex Gazelle S": {
         "France": "https://www.amazon.fr/dp/B0BMTV1Z33",
         "Suisse": "https://www.manor.ch/fr/p/p0-21122701",
         "Allemagne": "https://www.amazon.de/dp/B0BMTV1Z33",
-        "Italie": "https://www.amazon.it/dp/B0BMTV1Z33"
+        "Italie": "https://www.amazon.it/dp/B0BMTV1Z33",
+        "USA (official)": "https://www.cybex-online.com/en/us/strollers/full-size-strollers/?...Gazelle%20S"
     },
     "Cybex Balios S Lux": {
         "France": "https://www.amazon.fr/dp/B0BMTRHBN7",
         "Suisse": "https://www.babywalz.ch/fr/p/cybex-balios-s-lux-2023-p1763737/",
         "Allemagne": "https://www.windeln.de/cybex-balios-s-lux-2023.html",
-        "Italie": "https://www.amazon.it/dp/B0BMTRHBN7"
+        "Italie": "https://www.amazon.it/dp/B0BMTRHBN7",
+        "USA (official)": "https://www.cybex-online.com/en/us/strollers/full-size-strollers/?...Balios%20S%20Lux"
     }
 }
 
@@ -81,6 +86,8 @@ def get_price(url):
             price_tag = soup.select_one(".price")
         elif "windeln" in url:
             price_tag = soup.select_one(".price")
+        elif "cybex-online.com" in url:
+            price_tag = soup.select_one(".product-price") or soup.find("span", class_=re.compile("price"))
         else:
             price_tag = soup.find("span")
 
@@ -124,7 +131,7 @@ if autorise_scraping:
             prix = get_price(lien)
             if prix:
                 devise = "CHF" if pays == "Suisse" else "EUR"
-                if pays == "USA":
+                if "USA" in pays:
                     devise = "USD"
                 elif pays == "Émirats Arabes Unis":
                     devise = "AED"
@@ -135,7 +142,7 @@ if autorise_scraping:
 
                 try:
                     montant = float(re.sub(r"[^0-9.,]", "", prix).replace(",", "."))
-                    tva = 0.2 if pays in ["France", "Allemagne", "Italie"] else 0.077 if pays == "Suisse" else 0.0
+                    tva = 0.2 if any(p in pays for p in ["France", "Allemagne", "Italie"]) else 0.077 if "Suisse" in pays else 0.0
                     montant_ht = montant / (1 + tva) if tva > 0 else montant
                     data.append({
                         "date": aujourdhui,
