@@ -50,23 +50,14 @@ urls = {
         "Suisse": "https://www.galaxus.ch/fr/s6/product/cybex-priam-seat-pack-we-the-baby-poussette-21401969",
         "Allemagne": "https://www.amazon.de/dp/B096VFCT8M",
         "Italie": "https://www.amazon.it/dp/B096VFCT8M",
-        "USA (official)": "https://www.cybex-online.com/en/us/strollers/full-size-strollers/?...Priam%203-in-1%20Travel%20System",
-        "USA (La Parisienne)": "https://www.cybex-online.com/en/us/p/ST_PL_Priam_La_Parisienne_US.html",
-        "USA (Seat Pack 2023)": "https://www.cybex-online.com/en/us/p/ST_PL_Priam_4_Seat_Pack_US.html"
+        "USA": "https://www.cybex-online.com/en/us/p/ST_PL_Priam_La_Parisienne_US.html"
     },
     "Cybex Gazelle S": {
         "France": "https://www.amazon.fr/dp/B0BMTV1Z33",
         "Suisse": "https://www.manor.ch/fr/p/p0-21122701",
         "Allemagne": "https://www.amazon.de/dp/B0BMTV1Z33",
         "Italie": "https://www.amazon.it/dp/B0BMTV1Z33",
-        "USA (official)": "https://www.cybex-online.com/en/us/strollers/full-size-strollers/?...Gazelle%20S"
-    },
-    "Cybex Balios S Lux": {
-        "France": "https://www.amazon.fr/dp/B0BMTRHBN7",
-        "Suisse": "https://www.babywalz.ch/fr/p/cybex-balios-s-lux-2023-p1763737/",
-        "Allemagne": "https://www.windeln.de/cybex-balios-s-lux-2023.html",
-        "Italie": "https://www.amazon.it/dp/B0BMTRHBN7",
-        "USA (official)": "https://www.cybex-online.com/en/us/strollers/full-size-strollers/?...Balios%20S%20Lux"
+        "USA": "https://www.cybex-online.com/en/us/strollers/full-size-strollers/?...Gazelle%20S"
     }
 }
 
@@ -82,10 +73,6 @@ def get_price(url):
             price_tag = soup.select_one(".product__price")
         elif "manor.ch" in url:
             price_tag = soup.select_one(".m-buybox__price")
-        elif "babywalz" in url:
-            price_tag = soup.select_one(".price")
-        elif "windeln" in url:
-            price_tag = soup.select_one(".price")
         elif "cybex-online.com" in url:
             price_tag = soup.select_one(".product-price") or soup.find("span", class_=re.compile("price"))
         else:
@@ -97,28 +84,46 @@ def get_price(url):
     except Exception:
         return None
 
-@st.cache_data(ttl=3600)
-def get_exchange_rates():
-    try:
-        response = requests.get("https://api.exchangerate.host/latest?base=EUR")
-        if response.status_code == 200:
-            data = response.json()
-            return data.get("rates", {})
-    except:
-        pass
-    return {}
-
 def extraire_site(url):
     try:
         return url.split("/")[2]
     except IndexError:
         return "N/A"
 
-rates = get_exchange_rates()
-st.write("Taux de change chargés :", rates)
+# Taux de change fixes
+# Base CHF = 1.0
+rates = {
+    "CHF": 1.0,
+    "EUR": 1/1.07,    # 1 CHF = 1.07 EUR, donc 1 EUR = ~0.9346 CHF => stored as CHF base inverse
+    "USD": 1/1.26     # 1 CHF = 1.26 USD, donc 1 USD = ~0.7937 CHF
+}
 
-if "EUR" not in rates:
-    rates["EUR"] = 1.0
+# Pour conversion, on convertit d'abord montant vers CHF, puis vers devise cible
+
+def convertir(montant, devise_origine, devise_cible):
+    try:
+        # Convertir montant en CHF
+        if devise_origine == "CHF":
+            montant_chf = montant
+        elif devise_origine == "EUR":
+            montant_chf = montant / (1/1.07)  # montant / taux = montant * 1.07
+        elif devise_origine == "USD":
+            montant_chf = montant / (1/1.26)  # montant * 1.26
+        else:
+            # devise inconnue, retour montant brut
+            return montant
+
+        # Convertir CHF vers devise cible
+        if devise_cible == "CHF":
+            return round(montant_chf, 2)
+        elif devise_cible == "EUR":
+            return round(montant_chf * (1/1.07), 2)
+        elif devise_cible == "USD":
+            return round(montant_chf * (1/1.26), 2)
+        else:
+            return round(montant_chf, 2)
+    except Exception:
+        return None
 
 mettre_a_jour = st.button("🔄 Mettre à jour maintenant")
 autorise_scraping = should_scrape() or mettre_a_jour
@@ -130,19 +135,18 @@ if autorise_scraping:
         for pays, lien in pays_urls.items():
             prix = get_price(lien)
             if prix:
-                devise = "CHF" if pays == "Suisse" else "EUR"
-                if "USA" in pays:
+                # Définir devise selon pays
+                if pays == "Suisse":
+                    devise = "CHF"
+                elif pays == "USA":
                     devise = "USD"
-                elif pays == "Émirats Arabes Unis":
-                    devise = "AED"
-                elif pays == "Japon":
-                    devise = "JPY"
-                elif pays == "Chine":
-                    devise = "CNY"
+                else:
+                    devise = "EUR"
 
                 try:
                     montant = float(re.sub(r"[^0-9.,]", "", prix).replace(",", "."))
-                    tva = 0.2 if any(p in pays for p in ["France", "Allemagne", "Italie"]) else 0.077 if "Suisse" in pays else 0.0
+                    # TVA selon pays
+                    tva = 0.2 if pays in ["France", "Allemagne", "Italie"] else 0.077 if pays == "Suisse" else 0.0
                     montant_ht = montant / (1 + tva) if tva > 0 else montant
                     data.append({
                         "date": aujourdhui,
@@ -162,26 +166,17 @@ if autorise_scraping:
         df.to_csv(csv_path, index=False)
         update_timestamp()
 
-if not df.empty and monnaie_affichage in rates:
-    taux_affichage = rates[monnaie_affichage]
-
-    def convertir(valeur, devise_origine):
-        taux_origine = rates.get(devise_origine, None)
-        if taux_origine is None or taux_affichage is None:
-            return None
-        try:
-            return round(valeur / taux_origine * taux_affichage, 2)
-        except Exception:
-            return None
+if not df.empty:
+    taux_affichage = monnaie_affichage
 
     df[f"prix_ttc_{monnaie_affichage.lower()}"] = df.apply(
-        lambda row: convertir(row["prix_ttc"], row["devise"]), axis=1
+        lambda row: convertir(row["prix_ttc"], row["devise"], monnaie_affichage), axis=1
     )
     df[f"prix_ht_{monnaie_affichage.lower()}"] = df.apply(
-        lambda row: convertir(row["prix_ht"], row["devise"]), axis=1
+        lambda row: convertir(row["prix_ht"], row["devise"], monnaie_affichage), axis=1
     )
 else:
-    st.error("Taux de change non disponibles pour la devise sélectionnée.")
+    st.error("Pas de données disponibles.")
 
 if not df.empty:
     df["Acheter"] = df["lien"].apply(lambda x: f"[🔗 Lien]({x})")
@@ -215,18 +210,4 @@ if not df.empty:
         if len(sous_df) >= 2:
             meilleur = sous_df.iloc[0]
             pire = sous_df.iloc[-1]
-            ecart = pire[f"prix_ttc_{monnaie_affichage.lower()}"] - meilleur[f"prix_ttc_{monnaie_affichage.lower()}"]
-            pourcentage = (ecart / meilleur[f"prix_ttc_{monnaie_affichage.lower()}"]) * 100
-            if pourcentage >= 20:
-                resultats.append({
-                    "modele": modele,
-                    "acheter": f"{meilleur['site']} ({meilleur['pays']})",
-                    "revendre": f"{pire['site']} ({pire['pays']})",
-                    "gain potentiel": f"{pourcentage:.1f}%"
-                })
-
-    if resultats:
-        st.success("Des opportunités ont été détectées :")
-        st.table(pd.DataFrame(resultats))
-    else:
-        st.info("Aucune opportunité détectée pour le moment.")
+            ecart = pire[f"prix_ttc_{monnaie_aff
