@@ -46,10 +46,10 @@ def update_timestamp():
 
 urls = {
     "Cybex Priam": {
-        "France": "https://www.amazon.fr/dp/B096VFCT8M",
-        "Suisse": "https://www.galaxus.ch/fr/s6/product/cybex-priam-seat-pack-we-the-baby-poussette-21401969",
-        "Allemagne": "https://www.amazon.de/dp/B096VFCT8M",
-        "Italie": "https://www.amazon.it/dp/B096VFCT8M"
+        "France": "https://www.cybex-online.com/fr/fr/p/set-st-pl-priam-4.html",
+        "Suisse": "https://www.cybex-online.com/fr/ch/p/set-st-pl-priam-4.html",
+        "Allemagne": "https://www.cybex-online.com/de/de/p/set-st-pl-priam-4.html",
+        "Italie": "https://www.cybex-online.com/it/it/p/set-st-pl-priam-4.html"
     },
     "Cybex Gazelle S": {
         "France": "https://www.amazon.fr/dp/B0BMTV1Z33",
