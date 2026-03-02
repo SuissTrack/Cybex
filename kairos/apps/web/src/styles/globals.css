@@ -1,0 +1,106 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --transition: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply bg-snow text-ink-10 font-sans;
+    line-height: 1.65;
+  }
+
+  /* Scrollbar discrète */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-ink-70 rounded-full;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-ink-60;
+  }
+}
+
+@layer components {
+  /* Badge "live" pulsant */
+  .badge-live {
+    @apply inline-flex items-center gap-1.5;
+  }
+  .badge-live::before {
+    content: '';
+    @apply block w-2 h-2 rounded-full bg-success;
+    animation: breathe 2s ease-in-out infinite;
+  }
+
+  /* Badge "démo" */
+  .badge-demo::before {
+    content: '';
+    @apply block w-2 h-2 rounded-full bg-warning;
+  }
+
+  /* Carte d'offre — animation d'entrée */
+  @keyframes slide-in {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .job-card-enter {
+    animation: slide-in 0.3s var(--transition) both;
+  }
+}
+
+@layer utilities {
+  @keyframes breathe {
+    0%, 100% {
+      box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.4);
+    }
+    50% {
+      box-shadow: 0 0 0 4px rgba(22, 163, 74, 0);
+    }
+  }
+
+  @keyframes shimmer {
+    from { background-position: -200% 0; }
+    to   { background-position:  200% 0; }
+  }
+
+  .skeleton {
+    background: linear-gradient(
+      90deg,
+      #f0f0f0 25%,
+      #e0e0e0 50%,
+      #f0f0f0 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.4s ease-in-out infinite;
+  }
+
+  .truncate-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
