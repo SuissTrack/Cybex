@@ -1,0 +1,253 @@
+// This is your Prisma schema file for the AI Job Application Agent
+// Targets: French & Swiss job markets
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Enums ──────────────────────────────────────────────────────────────────────
+
+enum AuthProvider {
+  LOCAL
+  GOOGLE
+  GITHUB
+}
+
+enum RemotePreference {
+  ONSITE
+  HYBRID
+  REMOTE
+  ANY
+}
+
+enum ContractType {
+  CDI
+  CDD
+  FREELANCE
+  INTERNSHIP
+  APPRENTICESHIP
+  PART_TIME
+  ANY
+}
+
+enum JobSource {
+  LINKEDIN
+  INDEED
+  JOBSCH
+  JOBUPCH
+  WELCOME_TO_THE_JUNGLE
+  JOBROOM   // job-room.ch (portail officiel SECO / Confédération Suisse)
+  ADZUNA    // Adzuna aggregator (agrège Indeed, jobs.ch, WTTJ, etc.)
+  OTHER
+}
+
+enum ApplicationStatus {
+  DRAFT                // Préparée — pas encore envoyée
+  QUEUED
+  APPLYING
+  APPLIED
+  FAILED
+  INTERVIEW_SCHEDULED
+  OFFER_RECEIVED
+  REJECTED
+  WITHDRAWN
+}
+
+enum AutomationLogLevel {
+  INFO
+  WARN
+  ERROR
+}
+
+// ─── User & Auth ────────────────────────────────────────────────────────────────
+
+model User {
+  id                String       @id @default(cuid())
+  email             String       @unique
+  passwordHash      String?
+  provider          AuthProvider @default(LOCAL)
+  providerAccountId String?
+  emailVerified     Boolean      @default(false)
+  verifyToken       String?
+  resetToken        String?
+  resetTokenExpiry  DateTime?
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+
+  profile           Profile?
+  applications      Application[]
+  refreshTokens     RefreshToken[]
+
+  @@index([email])
+  @@map("users")
+}
+
+model RefreshToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([token])
+  @@index([userId])
+  @@map("refresh_tokens")
+}
+
+// ─── Profile ────────────────────────────────────────────────────────────────────
+
+model Profile {
+  id               String           @id @default(cuid())
+  userId           String           @unique
+  user             User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Personal info
+  firstName        String?
+  lastName         String?
+  phone            String?
+  location         String?
+  linkedinUrl      String?
+  portfolioUrl     String?
+  summary          String?          @db.Text
+
+  // CV
+  cvPath           String?          // stored path on disk
+  cvOriginalName   String?
+  cvParsedText     String?          @db.Text
+  cvParsedAt       DateTime?
+
+  // Skills & experience
+  skills           String[]
+  languages        Json?            // [{ name, level }]
+  experience       Json?            // [{ title, company, startDate, endDate, description }]
+  education        Json?            // [{ degree, institution, year }]
+
+  // Job preferences
+  preferences      JobPreference?
+
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+
+  @@map("profiles")
+}
+
+model JobPreference {
+  id               String           @id @default(cuid())
+  profileId        String           @unique
+  profile          Profile          @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  desiredTitles    String[]
+  desiredLocations String[]
+  remotePreference RemotePreference @default(ANY)
+  contractTypes    ContractType[]
+  minSalary        Int?
+  maxSalary        Int?
+  currency         String           @default("CHF")
+  targetCountries  String[]         @default(["CH", "FR"])
+  isActive         Boolean          @default(true)
+
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+
+  @@map("job_preferences")
+}
+
+// ─── Jobs ────────────────────────────────────────────────────────────────────────
+
+model Job {
+  id               String       @id @default(cuid())
+  externalId       String?      // original ID from source platform
+  source           JobSource
+  sourceUrl        String       @unique
+
+  title            String
+  company          String
+  location         String?
+  isRemote         Boolean      @default(false)
+  contractType     ContractType @default(CDI)
+  salaryMin        Int?
+  salaryMax        Int?
+  currency         String       @default("CHF")
+
+  description      String       @db.Text
+  requirements     String?      @db.Text
+  benefits         String?      @db.Text
+
+  applyUrl         String
+  postedAt         DateTime?
+  expiresAt        DateTime?
+  scrapedAt        DateTime     @default(now())
+
+  // AI enrichment
+  skills           String[]
+  embedding        Float[]      // for semantic search (optional pgvector)
+  aiSummary        String?      @db.Text
+
+  applications     Application[]
+
+  @@index([source])
+  @@index([title])
+  @@index([company])
+  @@index([scrapedAt])
+  @@index([postedAt])
+  @@map("jobs")
+}
+
+// ─── Applications ────────────────────────────────────────────────────────────────
+
+model Application {
+  id               String            @id @default(cuid())
+  userId           String
+  user             User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  jobId            String
+  job              Job               @relation(fields: [jobId], references: [id])
+
+  status           ApplicationStatus @default(QUEUED)
+  matchScore       Float?            // 0–1 relevance score
+  coverLetter      String?           @db.Text
+  customAnswers    Json?             // { questionText: answer }
+
+  appliedAt        DateTime?
+  respondedAt      DateTime?
+  interviewDate    DateTime?
+
+  notes            String?           @db.Text
+  failureReason    String?
+
+  automationLogs   AutomationLog[]
+
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+
+  @@unique([userId, jobId])
+  @@index([userId])
+  @@index([status])
+  @@index([createdAt])
+  @@map("applications")
+}
+
+// ─── Automation Logs ────────────────────────────────────────────────────────────
+
+model AutomationLog {
+  id              String             @id @default(cuid())
+  applicationId   String?
+  application     Application?       @relation(fields: [applicationId], references: [id], onDelete: SetNull)
+
+  level           AutomationLogLevel @default(INFO)
+  step            String             // e.g. "navigate", "fill_form", "submit"
+  message         String
+  payload         Json?
+  screenshotPath  String?
+
+  createdAt       DateTime           @default(now())
+
+  @@index([applicationId])
+  @@index([createdAt])
+  @@map("automation_logs")
+}

@@ -1,0 +1,30 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "kairos-mvp",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "port": 3000,
+      "cwd": "frontend"
+    },
+    {
+      "name": "web",
+      "runtimeExecutable": "/Users/samybm/.local/bin/pnpm",
+      "runtimeArgs": ["--filter", "@kairos/web", "dev"],
+      "port": 5173
+    },
+    {
+      "name": "api",
+      "runtimeExecutable": "/Users/samybm/.local/bin/pnpm",
+      "runtimeArgs": ["--filter", "@kairos/api", "dev"],
+      "port": 8788
+    },
+    {
+      "name": "proxy",
+      "runtimeExecutable": "/Users/samybm/.local/bin/pnpm",
+      "runtimeArgs": ["--filter", "@kairos/proxy", "dev"],
+      "port": 8787
+    }
+  ]
+}
