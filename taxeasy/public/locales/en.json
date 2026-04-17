@@ -1,0 +1,151 @@
+{
+  "app": {
+    "name": "TaxEasy",
+    "tagline": "Geneva tax declaration made simple"
+  },
+  "nav": {
+    "declarations": "Declarations",
+    "documents": "Documents",
+    "settings": "Settings",
+    "logout": "Sign out"
+  },
+  "auth": {
+    "login": "Sign in",
+    "register": "Create account",
+    "email": "Email address",
+    "sendMagicLink": "Send magic link",
+    "checkEmail": "Check your email",
+    "checkEmailDesc": "A sign-in link was sent to {{email}}. Valid for 10 minutes.",
+    "devLogin": "Quick login (dev)"
+  },
+  "dashboard": {
+    "title": "My declarations",
+    "subtitle": "Geneva tax deadline: {{deadline}}",
+    "newDeclaration": "+ New declaration",
+    "noDeclarations": "No declarations yet",
+    "noDeclarationsDesc": "Start your 2025 tax declaration in a few minutes.",
+    "startDeclaration": "Start my declaration",
+    "continue": "Continue",
+    "view": "View",
+    "export": "Export",
+    "deadline": "Filing deadline",
+    "deadlineNote": "You may request an extension until 30 June 2026 via ge.ch."
+  },
+  "status": {
+    "IN_PROGRESS": "In progress",
+    "REVIEW_PENDING": "Pending review",
+    "COMPLETED": "Completed",
+    "SUBMITTED": "Submitted"
+  },
+  "wizard": {
+    "back": "Back",
+    "continue": "Continue",
+    "finish": "Finish",
+    "step": "Step {{current}} / {{total}}",
+    "saving": "Saving…",
+    "saved": "Saved",
+    "hint": "Tip",
+    "required": "This field is required.",
+    "uploadDoc": "Upload a document",
+    "dragDrop": "Drag & drop or click to select",
+    "supportedFormats": "PDF, JPEG, PNG — max 20 MB",
+    "uploading": "Uploading…",
+    "uploadSuccess": "Document uploaded successfully",
+    "uploadError": "Upload failed"
+  },
+  "sections": {
+    "residency": "Residency",
+    "family": "Family status",
+    "income": "Income",
+    "deductions": "Deductions",
+    "wealth": "Wealth",
+    "summary": "Summary"
+  },
+  "tax": {
+    "icc": "ICC (Cantonal + Municipal)",
+    "ifd": "IFD (Federal)",
+    "fortune": "Wealth tax",
+    "total": "Estimated total",
+    "grossIncome": "Gross income",
+    "netIncome": "Net taxable income",
+    "deductions": "Deductions",
+    "splitting": "Splitting",
+    "communalRate": "Municipal rate",
+    "commune": "Municipality"
+  },
+  "export": {
+    "pdf": "PDF summary",
+    "pdfDesc": "Full summary with ICC, IFD, detailed deductions",
+    "getax": "GeTax .tax",
+    "getaxDesc": "File to import directly into GeTax on ge.ch",
+    "download": "Download",
+    "generating": "Generating…",
+    "premiumRequired": "Basic and Premium plans only",
+    "notCompleted": "Complete all wizard steps to enable exports."
+  },
+  "documents": {
+    "title": "My documents",
+    "noDocuments": "No documents",
+    "noDocumentsDesc": "Your uploaded documents will appear here.",
+    "importedOn": "Uploaded on {{date}}",
+    "viewData": "View data",
+    "hideData": "Hide",
+    "delete": "Delete",
+    "confirmDelete": "Delete document \"{{name}}\"?",
+    "ocrFallback": "OCR confidence is insufficient. Please verify the extracted data."
+  },
+  "ocrStatus": {
+    "PENDING": "Pending",
+    "PROCESSING": "Processing…",
+    "DONE": "Extracted",
+    "FAILED": "OCR failed",
+    "MANUAL_REVIEW": "Manual review"
+  },
+  "docTypes": {
+    "SALARY_CERT": "Salary certificate",
+    "LPP": "Pension fund attestation (2nd pillar)",
+    "PILLAR3A": "3rd pillar A attestation",
+    "PILLAR3B": "3rd pillar B attestation",
+    "BANK_STATEMENT": "Bank / tax statement",
+    "LAMAL": "Health insurance premium attestation",
+    "MEDICAL": "Medical bills",
+    "DONATION": "Donation receipt",
+    "REAL_ESTATE": "Real estate documents",
+    "OTHER": "Other document"
+  },
+  "settings": {
+    "title": "Settings",
+    "subtitle": "Manage your profile and subscription.",
+    "profile": "Profile",
+    "fullName": "Full name",
+    "email": "Email",
+    "emailReadOnly": "Your email cannot be changed (used for magic link sign-in).",
+    "commune": "Municipality of residence",
+    "communePlaceholder": "— Select your municipality —",
+    "communeNote": "Used to apply the correct municipal rate in the ICC calculation.",
+    "save": "Save changes",
+    "plan": "Subscription",
+    "upgradeTo": "Upgrade to {{plan}}",
+    "maxPlan": "✓ Maximum plan",
+    "dangerZone": "Danger zone",
+    "deleteAccount": "Delete account (contact support)",
+    "createdOn": "Account created on {{date}}"
+  },
+  "plans": {
+    "FREE": "Free",
+    "BASIC": "Basic",
+    "PREMIUM": "Premium"
+  },
+  "errors": {
+    "generic": "An error occurred. Please try again.",
+    "notFound": "Page not found.",
+    "unauthorized": "You must be signed in to access this page.",
+    "forbidden": "Access denied.",
+    "serverError": "Server error. Please try again in a few moments."
+  },
+  "deadline": {
+    "main": "31 March 2026",
+    "extended": "30 June 2026",
+    "daysLeft": "{{days}} days left"
+  }
+}

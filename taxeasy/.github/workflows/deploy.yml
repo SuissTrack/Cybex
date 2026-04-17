@@ -1,0 +1,163 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Deployment environment"
+        required: true
+        default: "production"
+        type: choice
+        options: [production, staging]
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: false # Never cancel an in-flight deploy
+
+env:
+  NODE_VERSION: "20"
+
+jobs:
+  # ────────────────────────────────────────────────────────────────
+  # 1. Guard — only deploy if CI passes
+  # ────────────────────────────────────────────────────────────────
+  ci-check:
+    name: Verify CI status
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate Prisma Client
+        run: npm run db:generate
+
+      - name: Type check
+        run: npx tsc --noEmit
+
+      - name: Unit tests
+        run: npm test
+        env:
+          DATABASE_URL: "postgresql://noop:noop@localhost/noop"
+          NEXTAUTH_SECRET: "ci-deploy-guard-secret"
+
+  # ────────────────────────────────────────────────────────────────
+  # 2. Database migration — run before the new code goes live
+  # ────────────────────────────────────────────────────────────────
+  migrate:
+    name: Database migration
+    runs-on: ubuntu-latest
+    needs: [ci-check]
+    environment: ${{ github.event.inputs.environment || 'production' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate Prisma Client
+        run: npm run db:generate
+
+      - name: Run Prisma migrations
+        run: npx prisma migrate deploy
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
+  # ────────────────────────────────────────────────────────────────
+  # 3. Deploy to Vercel (production or preview)
+  # ────────────────────────────────────────────────────────────────
+  deploy-vercel:
+    name: Deploy to Vercel
+    runs-on: ubuntu-latest
+    needs: [migrate]
+    environment: ${{ github.event.inputs.environment || 'production' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+
+      - name: Install Vercel CLI
+        run: npm install -g vercel@latest
+
+      - name: Pull Vercel environment
+        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Build project artifacts
+        run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+        env:
+          NEXT_TELEMETRY_DISABLED: 1
+
+      - name: Deploy to Vercel
+        id: vercel-deploy
+        run: |
+          DEPLOYMENT_URL=$(vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }})
+          echo "deployment_url=$DEPLOYMENT_URL" >> $GITHUB_OUTPUT
+
+      - name: Comment deployment URL on PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `✅ Deployed to Vercel: ${{ steps.vercel-deploy.outputs.deployment_url }}`
+            })
+
+  # ────────────────────────────────────────────────────────────────
+  # 4. Post-deploy smoke test
+  # ────────────────────────────────────────────────────────────────
+  smoke-test:
+    name: Smoke test
+    runs-on: ubuntu-latest
+    needs: [deploy-vercel]
+    steps:
+      - name: Check landing page
+        run: |
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" ${{ secrets.PRODUCTION_URL }})
+          if [ "$STATUS" != "200" ]; then
+            echo "❌ Landing page returned HTTP $STATUS"
+            exit 1
+          fi
+          echo "✅ Landing page OK (HTTP $STATUS)"
+
+      - name: Check API health
+        run: |
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" ${{ secrets.PRODUCTION_URL }}/api/auth/session)
+          if [ "$STATUS" != "200" ] && [ "$STATUS" != "401" ]; then
+            echo "❌ Auth API returned unexpected HTTP $STATUS"
+            exit 1
+          fi
+          echo "✅ Auth API OK (HTTP $STATUS)"
+
+# ────────────────────────────────────────────────────────────────
+# Required GitHub Secrets:
+#   VERCEL_TOKEN       — Vercel personal access token
+#   VERCEL_ORG_ID      — Vercel organisation ID
+#   VERCEL_PROJECT_ID  — Vercel project ID
+#   DATABASE_URL       — Production PostgreSQL connection string
+#   PRODUCTION_URL     — e.g. https://app.taxeasy.ch
+# ────────────────────────────────────────────────────────────────
