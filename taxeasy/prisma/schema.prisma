@@ -1,0 +1,144 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id           String        @id @default(cuid())
+  email        String        @unique
+  name         String?
+  plan         Plan          @default(FREE)
+  commune      String?
+  avsNumber    String?       // Format officiel : 756.XXXX.XXXX.XX
+  address      String?       // Rue et numéro (ex: Rue de Rive 12)
+  postalCode   String?       // NPA 4 chiffres (ex: 1204)
+  createdAt    DateTime      @default(now())
+  declarations Declaration[]
+  documents    Document[]
+  sessions     Session[]
+  accounts     Account[]
+}
+
+model Declaration {
+  id            String      @id @default(cuid())
+  userId        String
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  taxYear       Int
+  status        DeclStatus  @default(IN_PROGRESS)
+  currentNodeId String      @default("residency_type")
+  answers       Json        @default("{}")
+  computedTax   Json?
+  isTOU         Boolean     @default(false)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  documents     Document[]
+  exports       Export[]
+
+  @@index([userId])
+  @@index([status])
+}
+
+model Document {
+  id            String       @id @default(cuid())
+  userId        String
+  user          User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  declarationId String?
+  declaration   Declaration? @relation(fields: [declarationId], references: [id], onDelete: SetNull)
+  type          DocType
+  filename      String
+  storagePath   String
+  ocrStatus     OcrStatus    @default(PENDING)
+  extractedData Json?
+  confidence    Float?
+  uploadedAt    DateTime     @default(now())
+
+  @@index([userId])
+  @@index([declarationId])
+}
+
+model Export {
+  id            String       @id @default(cuid())
+  declarationId String
+  declaration   Declaration  @relation(fields: [declarationId], references: [id], onDelete: Cascade)
+  format        ExportFormat
+  filePath      String
+  createdAt     DateTime     @default(now())
+
+  @@index([declarationId])
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expires      DateTime
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+enum Plan {
+  FREE
+  BASIC
+  PREMIUM
+}
+
+enum DeclStatus {
+  IN_PROGRESS
+  REVIEW_PENDING
+  COMPLETED
+  SUBMITTED
+}
+
+enum DocType {
+  SALARY_CERT
+  LPP
+  PILLAR3A
+  PILLAR3B
+  BANK_STATEMENT
+  LAMAL
+  MEDICAL
+  DONATION
+  REAL_ESTATE
+  OTHER
+}
+
+enum OcrStatus {
+  PENDING
+  PROCESSING
+  DONE
+  FAILED
+  MANUAL_REVIEW
+}
+
+enum ExportFormat {
+  PDF
+  GETAX_XML
+}

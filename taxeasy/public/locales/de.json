@@ -1,0 +1,151 @@
+{
+  "app": {
+    "name": "TaxEasy",
+    "tagline": "Genfer Steuererklärung leicht gemacht"
+  },
+  "nav": {
+    "declarations": "Steuererklärungen",
+    "documents": "Dokumente",
+    "settings": "Einstellungen",
+    "logout": "Abmelden"
+  },
+  "auth": {
+    "login": "Anmelden",
+    "register": "Konto erstellen",
+    "email": "E-Mail-Adresse",
+    "sendMagicLink": "Magic Link senden",
+    "checkEmail": "E-Mail prüfen",
+    "checkEmailDesc": "Ein Anmeldelink wurde an {{email}} gesendet. Gültig für 10 Minuten.",
+    "devLogin": "Schnellanmeldung (dev)"
+  },
+  "dashboard": {
+    "title": "Meine Steuererklärungen",
+    "subtitle": "Genfer Steuerdeadline: {{deadline}}",
+    "newDeclaration": "+ Neue Steuererklärung",
+    "noDeclarations": "Keine Steuererklärungen",
+    "noDeclarationsDesc": "Starten Sie Ihre Steuererklärung 2025 in wenigen Minuten.",
+    "startDeclaration": "Steuererklärung starten",
+    "continue": "Weiter",
+    "view": "Ansehen",
+    "export": "Exportieren",
+    "deadline": "Einreichungsfrist",
+    "deadlineNote": "Sie können eine Verlängerung bis zum 30. Juni 2026 über ge.ch beantragen."
+  },
+  "status": {
+    "IN_PROGRESS": "In Bearbeitung",
+    "REVIEW_PENDING": "Zur Überprüfung",
+    "COMPLETED": "Abgeschlossen",
+    "SUBMITTED": "Eingereicht"
+  },
+  "wizard": {
+    "back": "Zurück",
+    "continue": "Weiter",
+    "finish": "Abschliessen",
+    "step": "Schritt {{current}} / {{total}}",
+    "saving": "Speichern…",
+    "saved": "Gespeichert",
+    "hint": "Hinweis",
+    "required": "Dieses Feld ist erforderlich.",
+    "uploadDoc": "Dokument hochladen",
+    "dragDrop": "Drag & Drop oder klicken",
+    "supportedFormats": "PDF, JPEG, PNG — max. 20 MB",
+    "uploading": "Hochladen…",
+    "uploadSuccess": "Dokument erfolgreich hochgeladen",
+    "uploadError": "Hochladen fehlgeschlagen"
+  },
+  "sections": {
+    "residency": "Wohnsitz",
+    "family": "Familienstand",
+    "income": "Einkommen",
+    "deductions": "Abzüge",
+    "wealth": "Vermögen",
+    "summary": "Zusammenfassung"
+  },
+  "tax": {
+    "icc": "Kantons- und Gemeindesteuer (ICC)",
+    "ifd": "Direkte Bundessteuer (IFD)",
+    "fortune": "Vermögenssteuer",
+    "total": "Geschätzte Gesamtsteuer",
+    "grossIncome": "Bruttoeinkommen",
+    "netIncome": "Steuerbares Nettoeinkommen",
+    "deductions": "Abzüge",
+    "splitting": "Splitting",
+    "communalRate": "Gemeindekoeffizient",
+    "commune": "Gemeinde"
+  },
+  "export": {
+    "pdf": "PDF-Zusammenfassung",
+    "pdfDesc": "Vollständige Übersicht mit ICC, IFD, detaillierten Abzügen",
+    "getax": "GeTax .tax",
+    "getaxDesc": "Datei direkt in GeTax auf ge.ch importieren",
+    "download": "Herunterladen",
+    "generating": "Wird erstellt…",
+    "premiumRequired": "Nur für Basic- und Premium-Pläne",
+    "notCompleted": "Schliessen Sie alle Wizard-Schritte ab, um Exporte zu aktivieren."
+  },
+  "documents": {
+    "title": "Meine Dokumente",
+    "noDocuments": "Keine Dokumente",
+    "noDocumentsDesc": "Ihre hochgeladenen Dokumente erscheinen hier.",
+    "importedOn": "Hochgeladen am {{date}}",
+    "viewData": "Daten anzeigen",
+    "hideData": "Ausblenden",
+    "delete": "Löschen",
+    "confirmDelete": "Dokument \"{{name}}\" löschen?",
+    "ocrFallback": "OCR-Konfidenz unzureichend. Bitte überprüfen Sie die extrahierten Daten."
+  },
+  "ocrStatus": {
+    "PENDING": "Ausstehend",
+    "PROCESSING": "Wird verarbeitet…",
+    "DONE": "Extrahiert",
+    "FAILED": "OCR fehlgeschlagen",
+    "MANUAL_REVIEW": "Manuelle Prüfung"
+  },
+  "docTypes": {
+    "SALARY_CERT": "Lohnausweis",
+    "LPP": "BVG-Bescheinigung (2. Säule)",
+    "PILLAR3A": "Säule 3a Bescheinigung",
+    "PILLAR3B": "Säule 3b Bescheinigung",
+    "BANK_STATEMENT": "Bankbeleg / Steuerausweis",
+    "LAMAL": "Krankenkassenprämien-Bescheinigung",
+    "MEDICAL": "Arztkosten",
+    "DONATION": "Spendenquittung",
+    "REAL_ESTATE": "Liegenschaftsdokumente",
+    "OTHER": "Anderes Dokument"
+  },
+  "settings": {
+    "title": "Einstellungen",
+    "subtitle": "Profil und Abonnement verwalten.",
+    "profile": "Profil",
+    "fullName": "Vollständiger Name",
+    "email": "E-Mail",
+    "emailReadOnly": "Die E-Mail-Adresse kann nicht geändert werden (wird für Magic Link verwendet).",
+    "commune": "Wohngemeinde",
+    "communePlaceholder": "— Gemeinde auswählen —",
+    "communeNote": "Wird für den korrekten Gemeindekoeffizienten bei der ICC-Berechnung verwendet.",
+    "save": "Änderungen speichern",
+    "plan": "Abonnement",
+    "upgradeTo": "Zu {{plan}} wechseln",
+    "maxPlan": "✓ Maximaler Plan",
+    "dangerZone": "Gefahrenzone",
+    "deleteAccount": "Konto löschen (Support kontaktieren)",
+    "createdOn": "Konto erstellt am {{date}}"
+  },
+  "plans": {
+    "FREE": "Kostenlos",
+    "BASIC": "Basic",
+    "PREMIUM": "Premium"
+  },
+  "errors": {
+    "generic": "Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.",
+    "notFound": "Seite nicht gefunden.",
+    "unauthorized": "Sie müssen angemeldet sein, um auf diese Seite zuzugreifen.",
+    "forbidden": "Zugriff verweigert.",
+    "serverError": "Serverfehler. Bitte versuchen Sie es in wenigen Momenten erneut."
+  },
+  "deadline": {
+    "main": "31. März 2026",
+    "extended": "30. Juni 2026",
+    "daysLeft": "Noch {{days}} Tage"
+  }
+}

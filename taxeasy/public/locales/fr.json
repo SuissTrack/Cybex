@@ -1,0 +1,151 @@
+{
+  "app": {
+    "name": "TaxEasy",
+    "tagline": "Déclaration d'impôt genevoise simplifiée"
+  },
+  "nav": {
+    "declarations": "Déclarations",
+    "documents": "Documents",
+    "settings": "Paramètres",
+    "logout": "Déconnexion"
+  },
+  "auth": {
+    "login": "Connexion",
+    "register": "Créer un compte",
+    "email": "Adresse email",
+    "sendMagicLink": "Recevoir le lien de connexion",
+    "checkEmail": "Vérifiez votre email",
+    "checkEmailDesc": "Un lien de connexion a été envoyé à {{email}}. Valable 10 minutes.",
+    "devLogin": "Connexion rapide (dev)"
+  },
+  "dashboard": {
+    "title": "Mes déclarations",
+    "subtitle": "Deadline fiscale genevoise : {{deadline}}",
+    "newDeclaration": "+ Nouvelle déclaration",
+    "noDeclarations": "Aucune déclaration",
+    "noDeclarationsDesc": "Commencez votre déclaration d'impôt 2025 en quelques minutes.",
+    "startDeclaration": "Démarrer ma déclaration",
+    "continue": "Continuer",
+    "view": "Voir",
+    "export": "Exporter",
+    "deadline": "Délai de dépôt",
+    "deadlineNote": "Vous pouvez demander une prolongation jusqu'au 30 juin 2026 via ge.ch."
+  },
+  "status": {
+    "IN_PROGRESS": "En cours",
+    "REVIEW_PENDING": "À réviser",
+    "COMPLETED": "Complète",
+    "SUBMITTED": "Soumise"
+  },
+  "wizard": {
+    "back": "Retour",
+    "continue": "Continuer",
+    "finish": "Terminer",
+    "step": "Étape {{current}} / {{total}}",
+    "saving": "Sauvegarde…",
+    "saved": "Sauvegardé",
+    "hint": "Conseil",
+    "required": "Ce champ est obligatoire.",
+    "uploadDoc": "Télécharger un document",
+    "dragDrop": "Glissez-déposez ou cliquez pour sélectionner",
+    "supportedFormats": "PDF, JPEG, PNG — max 20 MB",
+    "uploading": "Import en cours…",
+    "uploadSuccess": "Document importé avec succès",
+    "uploadError": "Erreur lors de l'import"
+  },
+  "sections": {
+    "residency": "Résidence",
+    "family": "État civil & famille",
+    "income": "Revenus",
+    "deductions": "Déductions",
+    "wealth": "Fortune",
+    "summary": "Récapitulatif"
+  },
+  "tax": {
+    "icc": "ICC (Cantonal + Communal)",
+    "ifd": "IFD (Fédéral)",
+    "fortune": "Fortune",
+    "total": "Total estimé",
+    "grossIncome": "Revenu brut",
+    "netIncome": "Revenu net imposable",
+    "deductions": "Déductions",
+    "splitting": "Splitting",
+    "communalRate": "Taux communal",
+    "commune": "Commune"
+  },
+  "export": {
+    "pdf": "PDF récapitulatif",
+    "pdfDesc": "Résumé complet ICC, IFD, déductions détaillées",
+    "getax": "GeTax .tax",
+    "getaxDesc": "Fichier à importer directement dans GeTax sur ge.ch",
+    "download": "Télécharger",
+    "generating": "Génération…",
+    "premiumRequired": "Réservé aux plans Basic et Premium",
+    "notCompleted": "Complétez toutes les étapes du wizard pour activer les exports."
+  },
+  "documents": {
+    "title": "Mes documents",
+    "noDocuments": "Aucun document",
+    "noDocumentsDesc": "Vos documents importés apparaîtront ici.",
+    "importedOn": "Importé le {{date}}",
+    "viewData": "Voir données",
+    "hideData": "Masquer",
+    "delete": "Supprimer",
+    "confirmDelete": "Supprimer le document \"{{name}}\" ?",
+    "ocrFallback": "La confiance OCR est insuffisante. Vérifiez les données extraites."
+  },
+  "ocrStatus": {
+    "PENDING": "En attente",
+    "PROCESSING": "Analyse en cours…",
+    "DONE": "Extrait",
+    "FAILED": "Échec OCR",
+    "MANUAL_REVIEW": "Vérification manuelle"
+  },
+  "docTypes": {
+    "SALARY_CERT": "Certificat de salaire",
+    "LPP": "Attestation LPP (2ème pilier)",
+    "PILLAR3A": "Attestation 3ème pilier A",
+    "PILLAR3B": "Attestation 3ème pilier B",
+    "BANK_STATEMENT": "Relevé bancaire / fiscal",
+    "LAMAL": "Attestation prime LAMal",
+    "MEDICAL": "Factures médicales",
+    "DONATION": "Attestation de don",
+    "REAL_ESTATE": "Documents immobiliers",
+    "OTHER": "Autre document"
+  },
+  "settings": {
+    "title": "Paramètres",
+    "subtitle": "Gérez votre profil et votre abonnement.",
+    "profile": "Profil",
+    "fullName": "Nom complet",
+    "email": "Email",
+    "emailReadOnly": "L'email ne peut pas être modifié (utilisé pour la connexion magic link).",
+    "commune": "Commune de résidence",
+    "communePlaceholder": "— Sélectionner votre commune —",
+    "communeNote": "Utilisée pour appliquer le taux communal correct dans le calcul ICC.",
+    "save": "Enregistrer les modifications",
+    "plan": "Abonnement",
+    "upgradeTo": "Passer à {{plan}}",
+    "maxPlan": "✓ Plan maximum",
+    "dangerZone": "Zone de danger",
+    "deleteAccount": "Supprimer mon compte (contactez le support)",
+    "createdOn": "Compte créé le {{date}}"
+  },
+  "plans": {
+    "FREE": "Gratuit",
+    "BASIC": "Basic",
+    "PREMIUM": "Premium"
+  },
+  "errors": {
+    "generic": "Une erreur est survenue. Veuillez réessayer.",
+    "notFound": "Page introuvable.",
+    "unauthorized": "Vous devez être connecté pour accéder à cette page.",
+    "forbidden": "Accès non autorisé.",
+    "serverError": "Erreur serveur. Veuillez réessayer dans quelques instants."
+  },
+  "deadline": {
+    "main": "31 mars 2026",
+    "extended": "30 juin 2026",
+    "daysLeft": "Plus que {{days}} jours"
+  }
+}

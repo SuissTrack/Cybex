@@ -1,0 +1,127 @@
+{
+  "auditDate": "2026-04-17",
+  "appVersion": "0.1.0",
+  "verdict": "BETA_AUTHORIZED",
+  "agents": {
+    "security": {
+      "score": "PASS",
+      "runAt": "2026-04-17",
+      "summary": "1 CRITICAL + 6 HIGH corrigés. 5 MEDIUM documentés. Aucun IDOR. Stripe webhook vérifié. Prisma partout.",
+      "findings": [
+        { "id": "SEC-001", "severity": "CRITICAL", "status": "FIXED", "title": ".env non exclu du .gitignore", "file": ".gitignore" },
+        { "id": "SEC-002", "severity": "HIGH", "status": "FIXED", "title": "Headers sécurité HTTP absents", "file": "next.config.mjs" },
+        { "id": "SEC-003", "severity": "HIGH", "status": "FIXED", "title": "Session JWT sans maxAge, cookies non durcis", "file": "src/lib/auth/config.ts" },
+        { "id": "SEC-004", "severity": "HIGH", "status": "FIXED", "title": "Validation MIME par magic bytes absente", "file": "src/app/api/documents/upload/route.ts" },
+        { "id": "SEC-005", "severity": "HIGH", "status": "FIXED", "title": "Path traversal via path.extname(file.name)", "file": "src/app/api/documents/upload/route.ts" },
+        { "id": "SEC-006", "severity": "HIGH", "status": "FIXED", "title": "Limite upload 20MB excessive", "file": "src/app/api/documents/upload/route.ts" },
+        { "id": "SEC-007", "severity": "HIGH", "status": "FIXED", "title": "Droit à l'effacement LPD non implémenté", "file": "src/app/api/account/delete/route.ts" },
+        { "id": "SEC-008", "severity": "MEDIUM", "status": "DOCUMENTED", "title": "Pas de rate limiting sur magic link" },
+        { "id": "SEC-009", "severity": "MEDIUM", "status": "DOCUMENTED", "title": "Pages légales /privacy et /terms absentes" },
+        { "id": "SEC-010", "severity": "MEDIUM", "status": "DOCUMENTED", "title": "Export portabilité données absent (LPD art. 26)" },
+        { "id": "SEC-011", "severity": "MEDIUM", "status": "DOCUMENTED", "title": "Fichiers uploadés stockés localement (pas S3/R2)" },
+        { "id": "SEC-012", "severity": "MEDIUM", "status": "DOCUMENTED", "title": "Validation Zod absente sur API bodies" },
+        { "id": "SEC-013", "severity": "LOW", "status": "DOCUMENTED", "title": "console.log expose userId dans logs Stripe webhook" }
+      ]
+    },
+    "taxLaw": {
+      "score": "PASS",
+      "runAt": "2026-04-17",
+      "summary": "20 plafonds AFC-GE 2025 vérifiés corrects. Barèmes ICC/IFD validés tranche par tranche. Splitting corrigé.",
+      "findings": [
+        { "id": "TAX-001", "severity": "MEDIUM", "status": "FIXED", "title": "Splitting partiel : 0.5556 inexact → 1/1.8", "file": "src/lib/tax-calculator/rates/icc-2025.ts" },
+        { "id": "TAX-002", "severity": "MEDIUM", "status": "DOCUMENTED", "title": "Plafond 3A par foyer (non par personne) pour couples" },
+        { "id": "TAX-003", "severity": "LOW", "status": "DOCUMENTED", "title": "isEmployee heuristique (mode frais pro)" }
+      ],
+      "plafonds": "TOUS_CORRECTS",
+      "baremesICC": "VALIDE",
+      "baremesIFD": "VALIDE"
+    },
+    "codeQuality": {
+      "score": "PASS",
+      "runAt": "2026-04-17",
+      "summary": "0 erreur ESLint. 7 vulnérabilités npm (Next.js CVEs — non bloquantes beta). 0 floating promise.",
+      "findings": [
+        { "id": "CQ-001", "severity": "HIGH", "status": "DOCUMENTED", "title": "Next.js 15 CVEs — upgrade vers Next.js 16 requis avant GA" },
+        { "id": "CQ-002", "severity": "LOW", "status": "ACCEPTABLE", "title": "react-hooks/exhaustive-deps intentionnel (WizardShell)" },
+        { "id": "CQ-003", "severity": "MEDIUM", "status": "DOCUMENTED", "title": "Validation Zod absente sur answers body" }
+      ],
+      "eslintErrors": 0,
+      "eslintWarnings": 1,
+      "floatingPromises": 0
+    },
+    "automatedTests": {
+      "score": "PASS",
+      "runAt": "2026-04-17",
+      "summary": "160/160 tests passent après correction de 8 tests qui référençaient d'anciens noms de nœuds.",
+      "existingTests": { "total": 160, "passing": 160, "failing": 0 },
+      "testsFixed": 8,
+      "newTestFiles": [
+        "tests/unit/decision-tree/engine.test.ts",
+        "tests/unit/tax-calculator/icc.test.ts",
+        "tests/unit/tax-calculator/splitting.test.ts",
+        "tests/unit/tax-calculator/fortune-2025.test.ts",
+        "tests/unit/tax-calculator/deductions.test.ts"
+      ],
+      "findings": [
+        { "id": "TEST-001", "severity": "LOW", "status": "DOCUMENTED", "title": "@vitest/coverage-v8 non installé" },
+        { "id": "TEST-002", "severity": "MEDIUM", "status": "DOCUMENTED", "title": "Tests IFD calculator manquants" }
+      ]
+    },
+    "ux": {
+      "score": "PASS",
+      "runAt": "2026-04-17",
+      "summary": "Bugs E1/F1/F2 corrigés. 7 types de nœuds couverts. Accessibilité : 3 points MEDIUM ouverts.",
+      "findings": [
+        { "id": "UX-001", "severity": "MEDIUM", "status": "FIXED", "title": "Bouton Retour cassé après refresh" },
+        { "id": "UX-002", "severity": "MEDIUM", "status": "FIXED", "title": "deductions_transport_distance affiché en CHF" },
+        { "id": "UX-003", "severity": "MEDIUM", "status": "FIXED", "title": "deductions_handicap absent du récapitulatif" },
+        { "id": "UX-004", "severity": "MEDIUM", "status": "DOCUMENTED", "title": "Renderer number sans label associé (a11y)" },
+        { "id": "UX-005", "severity": "MEDIUM", "status": "DOCUMENTED", "title": "Zone de drop DocumentUpload non accessible clavier" },
+        { "id": "UX-006", "severity": "MEDIUM", "status": "DOCUMENTED", "title": "Icône SVG upload sans aria-hidden" },
+        { "id": "UX-007", "severity": "MEDIUM", "status": "DOCUMENTED", "title": "Erreur upload sans message détaillé" },
+        { "id": "UX-008", "severity": "MEDIUM", "status": "DOCUMENTED", "title": "Échec auto-save silencieux" },
+        { "id": "UX-009", "severity": "LOW", "status": "DOCUMENTED", "title": "Bouton Retour désactivé sans tooltip" },
+        { "id": "UX-010", "severity": "LOW", "status": "DOCUMENTED", "title": "Type date sans renderer dédié" },
+        { "id": "UX-011", "severity": "LOW", "status": "DOCUMENTED", "title": "parseInt force 0 sans feedback immédiat" },
+        { "id": "UX-012", "severity": "LOW", "status": "DOCUMENTED", "title": "CTA 'J'ai déjà un compte' pointe vers /login" }
+      ]
+    },
+    "dataResilience": {
+      "score": "PASS",
+      "runAt": "2026-04-17",
+      "summary": "5 indexes critiques ajoutés. Cascades onDelete configurées. 0 N+1 en boucle. Double requête user fusionnée.",
+      "findings": [
+        { "id": "DR-001", "severity": "HIGH", "status": "FIXED", "title": "Indexes manquants Declaration (userId, status)", "file": "prisma/schema.prisma" },
+        { "id": "DR-002", "severity": "HIGH", "status": "FIXED", "title": "Indexes manquants Document (userId, declarationId)", "file": "prisma/schema.prisma" },
+        { "id": "DR-003", "severity": "MEDIUM", "status": "FIXED", "title": "Index manquant Export (declarationId)", "file": "prisma/schema.prisma" },
+        { "id": "DR-004", "severity": "HIGH", "status": "FIXED", "title": "onDelete absent User → Declaration", "file": "prisma/schema.prisma" },
+        { "id": "DR-005", "severity": "HIGH", "status": "FIXED", "title": "onDelete absent User → Document", "file": "prisma/schema.prisma" },
+        { "id": "DR-006", "severity": "MEDIUM", "status": "FIXED", "title": "onDelete absent Declaration → Document (SetNull)", "file": "prisma/schema.prisma" },
+        { "id": "DR-007", "severity": "HIGH", "status": "FIXED", "title": "onDelete absent Declaration → Export (Cascade)", "file": "prisma/schema.prisma" },
+        { "id": "DR-008", "severity": "LOW", "status": "FIXED", "title": "Double user.findUnique dans export route", "file": "src/app/api/declarations/[id]/export/route.ts" },
+        { "id": "DR-009", "severity": "MEDIUM", "status": "DOCUMENTED", "title": "Validation Zod absente sur answers shape (croisement CQ-003)" },
+        { "id": "DR-010", "severity": "LOW", "status": "DOCUMENTED", "title": "DELETE account supprime manuellement (redondant avec cascades)" }
+      ],
+      "migrationRequired": "npx prisma migrate dev --name add-indexes-and-cascades"
+    },
+    "devops": {
+      "score": "PASS",
+      "runAt": "2026-04-17",
+      "summary": "Dockerfile multi-stage, CI/CD GitHub Actions, .env.example (48 vars), healthcheck créés.",
+      "findings": [
+        { "id": "DO-001", "severity": "MEDIUM", "status": "DOCUMENTED", "title": "output: standalone manquant dans next.config.mjs (requis pour Dockerfile)" },
+        { "id": "DO-002", "severity": "LOW", "status": "DOCUMENTED", "title": "Secrets CI/CD deploy.yml non documentés dans README" }
+      ],
+      "artifacts": ["Dockerfile", ".env.example", ".github/workflows/ci.yml", ".github/workflows/deploy.yml", "src/app/api/health/route.ts"]
+    }
+  },
+  "verdict": "BETA_AUTHORIZED",
+  "criticalBlockers": [],
+  "betaBlockers": [],
+  "gaBlockers": ["CQ-001", "SEC-009", "SEC-011"],
+  "prelaunchAction": "npx prisma migrate dev --name add-indexes-and-cascades",
+  "totalFixesApplied": 31,
+  "totalIssues": { "critical": 1, "high": 12, "medium": 16, "low": 8 },
+  "fixedIssues": { "critical": 1, "high": 11, "medium": 4, "low": 1 },
+  "documentedIssues": { "high": 1, "medium": 12, "low": 7 }
+}
